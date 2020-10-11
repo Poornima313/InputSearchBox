@@ -1,8 +1,7 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import SearchCard from '../SearchCard';
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import SearchCard from "../SearchCard";
 
 const SearchComponent = ({ data, onSelect }) => {
-
   const [isVisible, setVisibility] = useState(false);
   const [search, setSearch] = useState("");
   const [cursor, setCursor] = useState(-1);
@@ -21,23 +20,40 @@ const SearchComponent = ({ data, onSelect }) => {
   }, []);
 
   const handleClickOutside = (event) => {
-    if(searchContainer.current && searchContainer.current.contains(event.target)){
+    if (
+      searchContainer.current &&
+      searchContainer.current.contains(event.target)
+    ) {
       hideSuggestion();
     }
-  }
+  };
 
   const scrollIntoView = (position) => {
     searchResultRef.current.parentNode.scrollTo({
       top: position,
-      behaviour: "smooth"
-    })
-  }
+      behaviour: "smooth",
+    });
+  };
 
   const suggestions = useMemo(() => {
-    if(!search) return data;
+    if (!search) return data;
+    const dataFilter = (substr) => {
+      return data.filter((d) =>
+        Object.keys(d).some((key) => {
+          const item = d[key];
+          if (typeof item === "string") {
+            return item.toLowerCase().includes(substr.toLowerCase());
+          } else if (Array.isArray(item)) {
+            return item.some((a) =>
+              a.toLowerCase().includes(substr.toLowerCase())
+            );
+          }
+        })
+      );
+    };
 
-    return data.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
-  }, [data, search])
+    return dataFilter(search);
+  }, [data, search]);
 
   const keyboardNavigation = (e) => {
     if (e.key === "ArrowDown") {
@@ -67,35 +83,43 @@ const SearchComponent = ({ data, onSelect }) => {
   }, [cursor]);
 
   return (
-    <div className='form-group' ref={searchContainer}>
-      <div>
-        <input 
-          type='text'
-          name='search'
-          autoComplete='off'
-          placeholder='Search Users by ID, address, name'
-          className='form-control form-control-lg'
-          onClick={showSuggestion}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => keyboardNavigation(e)}
-        />
-        <div className={`search-result ${isVisible ? "visible": "invisible"}`}>
-          <ul className="list-group" ref={searchResultRef}>
-            {suggestions.map((item, idx) => (
-              <SearchCard key={item.id} {...item} 
-              onSelectItem={() => {
-                hideSuggestion();
-                setSearch(item.name);
-                onSelect(item);
-              }}
-              isHighlighted={cursor === idx ? true : false} />
-            ))}
-          </ul>
+    <div className="col-md-6 m-auto" ref={searchContainer}>
+      <h3 className="text-center mb-3">User Search</h3>
+      <div className="form-group">
+        <div>
+          <input
+            type="text"
+            name="search"
+            autoComplete="off"
+            placeholder="Search Users by ID, address, name"
+            className="form-control form-control-lg"
+            onClick={showSuggestion}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => keyboardNavigation(e)}
+          />
+          <div
+            className={`search-result ${isVisible ? "visible" : "invisible"}`}
+          >
+            <ul className="list-group" ref={searchResultRef}>
+              {suggestions.map((item, idx) => (
+                <SearchCard
+                  key={item.id}
+                  {...item}
+                  onSelectItem={() => {
+                    hideSuggestion();
+                    setSearch(item);
+                    onSelect(item);
+                  }}
+                  isHighlighted={cursor === idx ? true : false}
+                />
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default SearchComponent;

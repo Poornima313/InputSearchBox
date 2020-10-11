@@ -1,6 +1,6 @@
 import React from 'react';
 import './bootstrap.min.css';
-import AutoComplete from '../components/AutoComplete'
+import AutoComplete from './components/AutoComplete'
 
 function App() {
   return (
