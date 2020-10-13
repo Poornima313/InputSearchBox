@@ -80,7 +80,7 @@ const SearchComponent = ({ data, onSelect }) => {
     }
     let listItems = Array.from(searchResultRef.current.children);
     listItems[cursor] && scrollIntoView(listItems[cursor].offsetTop);
-  }, [cursor]);
+  }, [cursor, suggestions.length]);
 
   return (
     <div className="col-md-6 m-auto" ref={searchContainer}>
