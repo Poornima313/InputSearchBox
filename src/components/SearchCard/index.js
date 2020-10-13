@@ -18,6 +18,8 @@ const SearchCard = ({
         <div className="col text-left">
           <p className="mb-0 font-weight-boldline-height-1">{id}</p>
           <p className="mb-0 font-weight-boldline-height-1">{name}</p>
+          <p className="mb-0 font-weight-boldline-height-1">
+          {items.toString()}</p>
           <p className="mb-0 font-weight-boldline-height-1">{address}</p>
           <p className="mb-0 font-weight-boldline-height-1">{pincode}</p>
         </div>
